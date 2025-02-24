@@ -31,7 +31,7 @@
           "Port": "5062"
         }
       ],
-      "UpstreamPathTemplate": "/identity/{everything}" 
+      "UpstreamPathTemplate": "/identity/{everything}"
     },
     {
       "DownstreamPathTemplate": "/posts/{everything}",
