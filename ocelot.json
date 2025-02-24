@@ -1,0 +1,51 @@
+﻿{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/users/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5064"
+        }
+      ],
+      "UpstreamPathTemplate": "/users/{everything}"
+    },
+    {
+      "DownstreamPathTemplate": "/roles/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5064"
+        }
+      ],
+      "UpstreamPathTemplate": "/roles/{everything}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5062"
+        }
+      ],
+      "UpstreamPathTemplate": "/identity/{everything}" 
+    },
+    {
+      "DownstreamPathTemplate": "/posts/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5270"
+        }
+      ],
+      "UpstreamPathTemplate": "/posts/{everything}"
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "https://api.crypto-cyborg.org"
+  }
+}
