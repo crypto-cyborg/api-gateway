@@ -34,6 +34,16 @@ public static partial class ApiExtensions
                     ),
                     RoleClaimType = ClaimTypes.Role,
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = (context) =>
+                    {
+                        context.Token = context.Request.Cookies[configuration["Cookies:Name"]!];
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
         services.AddAuthorization();
