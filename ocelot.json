@@ -1,5 +1,22 @@
-{
+﻿{
   "Routes": [
+    {
+      "DownstreamPathTemplate": "/users/:userId/image",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5064"
+        }
+      ],
+      "UpstreamPathTemplate": "/users/:userId/image",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ],
+        "AllowedScopes": []
+      }
+    },
     {
       "DownstreamPathTemplate": "/users/{everything}",
       "DownstreamScheme": "http",
@@ -9,7 +26,16 @@
           "Port": "5064"
         }
       ],
-      "UpstreamPathTemplate": "/users/{everything}"
+      "UpstreamPathTemplate": "/users/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ],
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "AppAdmin"
+      }
     },
     {
       "DownstreamPathTemplate": "/roles/{everything}",
@@ -20,7 +46,33 @@
           "Port": "5064"
         }
       ],
-      "UpstreamPathTemplate": "/roles/{everything}"
+      "UpstreamPathTemplate": "/roles/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ],
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "Role": "AppAdmin"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/sign-out",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5062"
+        }
+      ],
+      "UpstreamPathTemplate": "/identity/sign-out",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ],
+        "AllowedScopes": []
+      }
     },
     {
       "DownstreamPathTemplate": "/api/auth/{everything}",
@@ -53,7 +105,26 @@
           "Port": "5270"
         }
       ],
-      "UpstreamPathTemplate": "/posts/{everything}"
+      "UpstreamPathTemplate": "/posts/{everything}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/posts/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5270"
+        }
+      ],
+      "UpstreamPathTemplate": "/posts/{everything}",
+      "UpstreamHttpMethod": [ "POST", "PATCH", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ],
+        "AllowedScopes": []
+      }
     }
   ],
   "GlobalConfiguration": {
