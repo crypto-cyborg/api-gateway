@@ -1,4 +1,4 @@
-﻿{
+{
   "Routes": [
     {
       "DownstreamPathTemplate": "/users/{everything}",
@@ -32,6 +32,17 @@
         }
       ],
       "UpstreamPathTemplate": "/identity/{everything}"
+    },
+    {
+      "DownstreamPathTemplate": "/api/account/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5062"
+        }
+      ],
+      "UpstreamPathTemplate": "/identity/account/{everything}"
     },
     {
       "DownstreamPathTemplate": "/posts/{everything}",
