@@ -1,7 +1,7 @@
 ﻿{
   "Routes": [
     {
-      "DownstreamPathTemplate": "/users/:userId/image",
+      "DownstreamPathTemplate": "/users/{userId}/image",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -9,7 +9,7 @@
           "Port": "5064"
         }
       ],
-      "UpstreamPathTemplate": "/users/:userId/image",
+      "UpstreamPathTemplate": "/users/{userId}/image",
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [
           "Bearer"
@@ -75,6 +75,23 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/api/account",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5062"
+        }
+      ],
+      "UpstreamPathTemplate": "/identity/account",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ],
+        "AllowedScopes": []
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/account/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -83,13 +100,7 @@
           "Port": "5062"
         }
       ],
-      "UpstreamPathTemplate": "/identity/account/{everything}",
-      "AuthenticationOptions": {
-        "AuthenticationProviderKeys": [
-          "Bearer"
-        ],
-        "AllowedScopes": []
-      }
+      "UpstreamPathTemplate": "/identity/account/{everything}"
     },
     {
       "DownstreamPathTemplate": "/api/auth/{everything}",
