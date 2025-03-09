@@ -2,6 +2,7 @@ using ApiGateway.Extensions;
 using ApiGateway.Models;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCookiePolicy(
+    new CookiePolicyOptions
+    {
+	MinimumSameSitePolicy = SameSiteMode.None,
+	HttpOnly = HttpOnlyPolicy.None,
+	Secure = CookieSecurePolicy.None,
+    });
 
 app.UseAuthentication();
 app.UseAuthorization();
