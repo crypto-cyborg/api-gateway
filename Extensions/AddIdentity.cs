@@ -19,28 +19,29 @@ public static partial class ApiExtensions
             })
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = GetValidationParameters(configuration);
+                options.TokenValidationParameters = GetValidationParameters(configuration, true);
 
                 options.Events = new JwtBearerEvents
                 {
-                    OnMessageReceived = async (context) =>
+                    OnMessageReceived = (context) =>
                     {
                         var cookieName = configuration["Cookies:Name"]!;
                         var accessToken = context.Request.Cookies[cookieName];
                         
                         context.Token = accessToken;
 
-                        if (accessToken is not null)
-                        {
-                            var validationParams = GetValidationParameters(configuration);
-                            var handler = new JwtSecurityTokenHandler();
-                            var principal = await handler.ValidateTokenAsync(accessToken, validationParams);
+                        if (accessToken is null) return Task.CompletedTask;
+                        
+                        var validationParams = GetValidationParameters(configuration, lifetime: false);
+                        var handler = new JwtSecurityTokenHandler();
+                        var principal = handler.ValidateToken(accessToken, validationParams, out _);
 
-                            var userId = principal.Claims
-                                .FirstOrDefault(c => c.Key == "userId").Value;
+                        // TODO: This can be null
+                        var userId = principal .FindFirst("userId")!.Value;
                             
-                            context.Request.Headers.Append("userId", userId.ToString());
-                        }
+                        context.Request.Headers.Append("userId", userId);
+
+                        return Task.CompletedTask;
                     }
                 };
             });
@@ -48,7 +49,7 @@ public static partial class ApiExtensions
         services.AddAuthorization();
     }
 
-    private static TokenValidationParameters GetValidationParameters(IConfiguration configuration)
+    private static TokenValidationParameters GetValidationParameters(IConfiguration configuration, bool lifetime)
     {
         var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
 
@@ -58,7 +59,7 @@ public static partial class ApiExtensions
         {
             ValidateIssuer = false,
             ValidateAudience = false,
-            ValidateLifetime = true,
+            ValidateLifetime = lifetime,
             ClockSkew = TimeSpan.Zero,
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(
