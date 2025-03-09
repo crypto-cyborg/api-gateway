@@ -75,6 +75,23 @@
       }
     },
     {
+      "DownstreamPathTemplate": "/api/account/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": "5062"
+        }
+      ],
+      "UpstreamPathTemplate": "/identity/account/{everything}",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKeys": [
+          "Bearer"
+        ],
+        "AllowedScopes": []
+      }
+    },
+    {
       "DownstreamPathTemplate": "/api/auth/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -84,17 +101,6 @@
         }
       ],
       "UpstreamPathTemplate": "/identity/{everything}"
-    },
-    {
-      "DownstreamPathTemplate": "/api/account/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": "5062"
-        }
-      ],
-      "UpstreamPathTemplate": "/identity/account/{everything}"
     },
     {
       "DownstreamPathTemplate": "/posts/{everything}",

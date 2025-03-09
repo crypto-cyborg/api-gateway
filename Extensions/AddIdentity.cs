@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using ApiGateway.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,10 +12,6 @@ public static partial class ApiExtensions
 {
     public static void AddGatewayIdentity(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
-
-        if (jwtOptions is null) throw new InvalidConfigurationException("Jwt configurations not found");
-
         services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -22,33 +19,52 @@ public static partial class ApiExtensions
             })
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(jwtOptions.SecretKey)
-                    ),
-                    RoleClaimType = ClaimTypes.Role,
-                };
+                options.TokenValidationParameters = GetValidationParameters(configuration);
 
                 options.Events = new JwtBearerEvents
                 {
-                    OnMessageReceived = (context) =>
+                    OnMessageReceived = async (context) =>
                     {
-                        var token = context.Request.Cookies[configuration["Cookies:Name"]!];
-                        context.Token = token;
+                        var cookieName = configuration["Cookies:Name"]!;
+                        var accessToken = context.Request.Cookies[cookieName];
+                        
+                        context.Token = accessToken;
 
-                        context.Request.Headers.Append("accessToken", token);
+                        if (accessToken is not null)
+                        {
+                            var validationParams = GetValidationParameters(configuration);
+                            var handler = new JwtSecurityTokenHandler();
+                            var principal = await handler.ValidateTokenAsync(accessToken, validationParams);
 
-                        return Task.CompletedTask;
+                            var userId = principal.Claims
+                                .FirstOrDefault(c => c.Key == "userId").Value;
+                            
+                            context.Request.Headers.Append("userId", userId.ToString());
+                        }
                     }
                 };
             });
 
         services.AddAuthorization();
+    }
+
+    private static TokenValidationParameters GetValidationParameters(IConfiguration configuration)
+    {
+        var jwtOptions = configuration.GetSection(nameof(JwtOptions)).Get<JwtOptions>();
+
+        if (jwtOptions is null) throw new InvalidConfigurationException("Jwt configurations not found");
+
+        return new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtOptions.SecretKey)
+            ),
+            RoleClaimType = ClaimTypes.Role,
+        };
     }
 }
