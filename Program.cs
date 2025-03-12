@@ -1,21 +1,33 @@
+using System.Net;
 using ApiGateway.Extensions;
 using ApiGateway.Models;
+using ApiGateway.Middlewares;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
-using Microsoft.AspNetCore.CookiePolicy;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.WebHost.ConfigureKestrel((context, options) =>
+{
+    options.Listen(IPAddress.Any, 5001, listenOptions =>
+    {
+        listenOptions.UseHttps(
+            "/home/tng/certs/cert.pfx",
+            "ihopethiswillworksomeday");
+    });
+});
+
+const string frontendPolicy = "frontendPolicy";
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policyBuilder =>
+    options.AddPolicy(name: frontendPolicy, policyBuilder =>
     {
         policyBuilder
-            .AllowAnyOrigin()
-            .AllowAnyOrigin()
+            .WithOrigins("http://192.168.0.1:3000", "http://172.27.192.1:5173", "http://10.1.16.9:3000")
+            .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
     });
@@ -36,16 +48,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCookiePolicy(
-    new CookiePolicyOptions
-    {
-	MinimumSameSitePolicy = SameSiteMode.None,
-	HttpOnly = HttpOnlyPolicy.None,
-	Secure = CookieSecurePolicy.None,
-    });
+app.UseMiddleware<RequestLoggingMiddleware>();
+
+app.UseCors(frontendPolicy);
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapGet("/healthcheck", () => "Hello World!").RequireAuthorization();
 
 app.UseOcelot().Wait();
 

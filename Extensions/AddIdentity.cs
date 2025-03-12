@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using ApiGateway.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Protocols.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,17 +20,15 @@ public static partial class ApiExtensions
             })
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = GetValidationParameters(configuration, true);
+                options.TokenValidationParameters = GetValidationParameters(configuration, lifetime: true);
 
                 options.Events = new JwtBearerEvents
                 {
-                    OnMessageReceived = (context) =>
+                    OnMessageReceived = context =>
                     {
-                        var cookieName = configuration["Cookies:Name"]!;
-                        var accessToken = context.Request.Cookies[cookieName];
-                        
+                        var accessToken = context.Request.Cookies[configuration["Cookies:Name"]!];
                         context.Token = accessToken;
-
+                        
                         if (accessToken is null) return Task.CompletedTask;
                         
                         var validationParams = GetValidationParameters(configuration, lifetime: false);
@@ -37,7 +36,7 @@ public static partial class ApiExtensions
                         var principal = handler.ValidateToken(accessToken, validationParams, out _);
 
                         // TODO: This can be null
-                        var userId = principal .FindFirst("userId")!.Value;
+                        var userId = principal.FindFirst("userId")!.Value;
                             
                         context.Request.Headers.Append("userId", userId);
 
@@ -46,7 +45,13 @@ public static partial class ApiExtensions
                 };
             });
 
-        services.AddAuthorization();
+        services.AddAuthorization(options =>
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build();
+        });
     }
 
     private static TokenValidationParameters GetValidationParameters(IConfiguration configuration, bool lifetime)
@@ -65,7 +70,7 @@ public static partial class ApiExtensions
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(jwtOptions.SecretKey)
             ),
-            RoleClaimType = ClaimTypes.Role,
+            RoleClaimType = "Role"
         };
     }
 }

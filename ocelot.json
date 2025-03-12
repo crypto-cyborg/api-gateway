@@ -6,15 +6,14 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5064"
+          "Port": 5064
         }
       ],
       "UpstreamPathTemplate": "/users/{userId}/image",
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [
           "Bearer"
-        ],
-        "AllowedScopes": []
+        ]
       }
     },
     {
@@ -23,15 +22,14 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5064"
+          "Port": 5064
         }
       ],
       "UpstreamPathTemplate": "/users/{everything}",
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [
           "Bearer"
-        ],
-        "AllowedScopes": []
+        ]
       },
       "RouteClaimsRequirement": {
         "Role": "AppAdmin"
@@ -43,15 +41,14 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5064"
+          "Port": 5064
         }
       ],
       "UpstreamPathTemplate": "/roles/{everything}",
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [
           "Bearer"
-        ],
-        "AllowedScopes": []
+        ]
       },
       "RouteClaimsRequirement": {
         "Role": "AppAdmin"
@@ -63,15 +60,14 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5062"
+          "Port": 5062
         }
       ],
       "UpstreamPathTemplate": "/identity/sign-out",
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [
           "Bearer"
-        ],
-        "AllowedScopes": []
+        ]
       }
     },
     {
@@ -80,15 +76,14 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5062"
+          "Port": 5062
         }
       ],
       "UpstreamPathTemplate": "/identity/account",
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [
           "Bearer"
-        ],
-        "AllowedScopes": []
+        ]
       }
     },
     {
@@ -97,7 +92,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5062"
+          "Port": 5062
         }
       ],
       "UpstreamPathTemplate": "/identity/account/{everything}"
@@ -108,7 +103,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5062"
+          "Port": 5062
         }
       ],
       "UpstreamPathTemplate": "/identity/{everything}"
@@ -119,7 +114,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5270"
+          "Port": 5270
         }
       ],
       "UpstreamPathTemplate": "/posts/{everything}",
@@ -131,7 +126,7 @@
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": "5270"
+          "Port": 5270
         }
       ],
       "UpstreamPathTemplate": "/posts/{everything}",
@@ -139,12 +134,11 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKeys": [
           "Bearer"
-        ],
-        "AllowedScopes": []
+        ]
       }
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://api.crypto-cyborg.org"
+    "BaseUrl": "https://crypto-cyborg.org"
   }
 }
